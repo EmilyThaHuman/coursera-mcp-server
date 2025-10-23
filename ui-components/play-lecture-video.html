@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coursera Lecture Video Player</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #0056D2 0%, #0072FF 100%);
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      font-size: 1.1rem;
+      opacity: 0.95;
+    }
+
+    .info-badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      padding: 8px 16px;
+      border-radius: 20px;
+      color: white;
+      font-size: 0.9rem;
+      margin-top: 10px;
+    }
+
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 24px;
+      margin-top: 20px;
+    }
+
+    .course-card {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+
+    .course-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.25);
+    }
+
+    .course-thumbnail {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .course-content {
+      padding: 20px;
+    }
+
+    .course-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .course-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1a1a1a;
+      flex: 1;
+      line-height: 1.4;
+    }
+
+    .rating-badge {
+      display: flex;
+      align-items: center;
+      background: #FFC107;
+      color: #1a1a1a;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-left: 10px;
+      white-space: nowrap;
+    }
+
+    .rating-badge::before {
+      content: "★";
+      margin-right: 4px;
+    }
+
+    .course-university {
+      color: #0056D2;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .course-description {
+      color: #666;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 16px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .course-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      color: #666;
+      font-size: 0.85rem;
+    }
+
+    .meta-item::before {
+      content: "";
+      width: 4px;
+      height: 4px;
+      background: #0056D2;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+
+    .difficulty-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .difficulty-beginner {
+      background: #E8F5E9;
+      color: #2E7D32;
+    }
+
+    .difficulty-intermediate {
+      background: #FFF3E0;
+      color: #EF6C00;
+    }
+
+    .difficulty-advanced {
+      background: #FCE4EC;
+      color: #C2185B;
+    }
+
+    .skills-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .skill-tag {
+      background: #F0F4FF;
+      color: #0056D2;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .course-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: #0056D2;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #004BB5;
+      transform: scale(1.02);
+    }
+
+    .btn-secondary {
+      background: #F5F5F5;
+      color: #333;
+    }
+
+    .btn-secondary:hover {
+      background: #E0E0E0;
+    }
+
+    .video-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 1000;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .video-modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .video-modal-content {
+      background: white;
+      border-radius: 16px;
+      max-width: 1000px;
+      width: 100%;
+      padding: 30px;
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #F5F5F5;
+      border: none;
+      cursor: pointer;
+      font-size: 1.5rem;
+      color: #666;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .modal-close:hover {
+      background: #E0E0E0;
+      transform: rotate(90deg);
+    }
+
+    .video-container {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+
+    .video-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .modal-course-info h2 {
+      font-size: 1.5rem;
+      color: #1a1a1a;
+      margin-bottom: 10px;
+    }
+
+    .modal-course-info p {
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .stats-container {
+      display: flex;
+      gap: 30px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-label {
+      color: #999;
+      font-size: 0.85rem;
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      color: #1a1a1a;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .certificate-badge {
+      display: inline-flex;
+      align-items: center;
+      background: #E8F5E9;
+      color: #2E7D32;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-top: 15px;
+    }
+
+    .certificate-badge::before {
+      content: "✓";
+      margin-right: 8px;
+      font-size: 1.2rem;
+    }
+
+    .no-results {
+      text-align: center;
+      color: white;
+      padding: 60px 20px;
+    }
+
+    .no-results h2 {
+      font-size: 2rem;
+      margin-bottom: 15px;
+    }
+
+    .no-results p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    @media (max-width: 768px) {
+      .courses-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .header h1 {
+        font-size: 1.5rem;
+      }
+
+      .video-modal-content {
+        padding: 20px;
+      }
+
+      .stats-container {
+        gap: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Coursera Course Recommendations</h1>
+      <p id="learning-goal"></p>
+      <div id="info-badges"></div>
+    </div>
+
+    <div id="courses-container" class="courses-grid"></div>
+    <div id="no-results" class="no-results" style="display: none;">
+      <h2>No Courses Found</h2>
+      <p>Try adjusting your search criteria or learning goals.</p>
+    </div>
+  </div>
+
+  <div id="video-modal" class="video-modal">
+    <div class="video-modal-content">
+      <button class="modal-close" onclick="closeModal()">×</button>
+      <div class="video-container" id="video-container"></div>
+      <div class="modal-course-info" id="modal-info"></div>
+    </div>
+  </div>
+
+  <script>
+    const data = window.__WIDGET_PROPS__ || {};
+    
+    function init() {
+      const learningGoal = data.learningGoal || "your interests";
+      document.getElementById("learning-goal").textContent = `Courses for: ${learningGoal}`;
+
+      // Display info badges
+      const infoBadges = document.getElementById("info-badges");
+      const badges = [];
+      
+      if (data.difficulty && data.difficulty !== "any") {
+        badges.push(`Level: ${data.difficulty.charAt(0).toUpperCase() + data.difficulty.slice(1)}`);
+      }
+      if (data.language) {
+        badges.push(`Language: ${data.language}`);
+      }
+      if (data.totalResults) {
+        badges.push(`${data.totalResults} course${data.totalResults !== 1 ? "s" : ""} found`);
+      }
+      
+      badges.forEach(badge => {
+        const badgeEl = document.createElement("span");
+        badgeEl.className = "info-badge";
+        badgeEl.textContent = badge;
+        infoBadges.appendChild(badgeEl);
+      });
+
+      // Display courses
+      const courses = data.courses || [];
+      const container = document.getElementById("courses-container");
+      const noResults = document.getElementById("no-results");
+
+      if (courses.length === 0) {
+        container.style.display = "none";
+        noResults.style.display = "block";
+        return;
+      }
+
+      courses.forEach((course, index) => {
+        const card = createCourseCard(course, index);
+        container.appendChild(card);
+      });
+    }
+
+    function createCourseCard(course, index) {
+      const card = document.createElement("div");
+      card.className = "course-card";
+      card.onclick = () => openModal(course);
+
+      const difficultyClass = `difficulty-${(course.difficultyLevel || "beginner").toLowerCase()}`;
+
+      card.innerHTML = `
+        <img src="${course.thumbnailUrl}" alt="${course.name}" class="course-thumbnail" onerror="this.style.background='linear-gradient(135deg, #667eea 0%, #764ba2 100%)'; this.src='';">
+        <div class="course-content">
+          <div class="course-header">
+            <h3 class="course-title">${course.name}</h3>
+            <div class="rating-badge">${course.rating.toFixed(1)}</div>
+          </div>
+          <div class="course-university">${course.university}</div>
+          <p class="course-description">${course.description}</p>
+          <div class="course-meta">
+            <span class="meta-item">${course.duration}</span>
+            <span class="meta-item">${formatEnrollments(course.enrollmentCount)} enrolled</span>
+            <span class="difficulty-badge ${difficultyClass}">${course.difficultyLevel}</span>
+          </div>
+          ${course.skills && course.skills.length > 0 ? `
+            <div class="skills-container">
+              ${course.skills.slice(0, 3).map(skill => `<span class="skill-tag">${skill}</span>`).join("")}
+            </div>
+          ` : ""}
+          <div class="course-actions">
+            ${course.previewVideoUrl ? `
+              <button class="btn btn-primary" onclick="event.stopPropagation(); openModal(${JSON.stringify(course).replace(/"/g, '&quot;')})">
+                ▶ Preview
+              </button>
+            ` : ""}
+            <a href="${course.courseUrl}" target="_blank" class="btn btn-secondary" onclick="event.stopPropagation()">
+              View Course
+            </a>
+          </div>
+        </div>
+      `;
+
+      return card;
+    }
+
+    function openModal(course) {
+      const modal = document.getElementById("video-modal");
+      const videoContainer = document.getElementById("video-container");
+      const modalInfo = document.getElementById("modal-info");
+
+      // Convert video URL to embed format
+      let embedUrl = course.previewVideoUrl;
+      if (embedUrl.includes("youtube.com") || embedUrl.includes("youtu.be")) {
+        const videoId = extractYouTubeId(embedUrl);
+        embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+      }
+
+      videoContainer.innerHTML = embedUrl ? `
+        <iframe 
+          src="${embedUrl}" 
+          frameborder="0" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+          allowfullscreen>
+        </iframe>
+      ` : `<p style="padding: 40px; text-align: center; color: #666;">Video preview not available</p>`;
+
+      modalInfo.innerHTML = `
+        <h2>${course.name}</h2>
+        <div class="course-university">${course.university}</div>
+        <p>${course.description}</p>
+        <div class="stats-container">
+          <div class="stat-item">
+            <span class="stat-label">Rating</span>
+            <span class="stat-value">⭐ ${course.rating.toFixed(1)}/5.0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Enrolled</span>
+            <span class="stat-value">${formatEnrollments(course.enrollmentCount)}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Duration</span>
+            <span class="stat-value">${course.duration}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Level</span>
+            <span class="stat-value">${course.difficultyLevel}</span>
+          </div>
+        </div>
+        ${course.skills && course.skills.length > 0 ? `
+          <div class="skills-container">
+            ${course.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join("")}
+          </div>
+        ` : ""}
+        ${course.certificateAvailable ? '<div class="certificate-badge">Certificate Available</div>' : ""}
+        <div class="course-actions" style="margin-top: 25px;">
+          <a href="${course.courseUrl}" target="_blank" class="btn btn-primary">
+            Enroll in Course
+          </a>
+        </div>
+      `;
+
+      modal.classList.add("active");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeModal() {
+      const modal = document.getElementById("video-modal");
+      modal.classList.remove("active");
+      document.body.style.overflow = "auto";
+      
+      // Stop video playback
+      document.getElementById("video-container").innerHTML = "";
+    }
+
+    function extractYouTubeId(url) {
+      const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+      const match = url.match(regExp);
+      return (match && match[7].length === 11) ? match[7] : null;
+    }
+
+    function formatEnrollments(count) {
+      if (count >= 1000000) {
+        return (count / 1000000).toFixed(1) + "M";
+      } else if (count >= 1000) {
+        return (count / 1000).toFixed(0) + "K";
+      }
+      return count.toString();
+    }
+
+    // Close modal when clicking outside
+    document.getElementById("video-modal").addEventListener("click", function(e) {
+      if (e.target === this) {
+        closeModal();
+      }
+    });
+
+    // Initialize on load
+    init();
+  </script>
+</body>
+</html>
+
