@@ -1,21 +1,12 @@
 name = "coursera-mcp-server"
-main = "src/worker.ts"
+main = "src/server/worker.ts"
 compatibility_date = "2024-01-01"
-node_compat = true
-
-[env.production]
-workers_dev = false
-route = "coursera-mcp.yourdomain.workers.dev/*"
-
-[build]
-command = "npm run build"
-
-# Add your Coursera API credentials as secrets
-# wrangler secret put COURSERA_API_KEY
-# wrangler secret put COURSERA_CLIENT_ID
-# wrangler secret put COURSERA_CLIENT_SECRET
+compatibility_flags = ["nodejs_compat"]
+workers_dev = true
 
 [vars]
-BASE_URL = "https://coursera-mcp.yourdomain.workers.dev"
+BASE_URL = "https://coursera-mcp-server.reed-b9b.workers.dev"
 COURSERA_API_BASE = "https://api.coursera.org/api"
+COURSERA_API_KEY = "RRCWoVu9MoVQDFWEHGL0lTu5H0Wx2xjB2Gy4FvJbQcUDFHJu"
+COURSERA_API_SECRET = "S6GK2ilLk9uxkv1qqcxOzn2am0w4NfuEdXwJhA4KhN3zGAqtgWgBXExAW2FsoUCl"
 
