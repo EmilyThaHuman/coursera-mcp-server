@@ -657,6 +657,43 @@ const httpServer = createServer(
       return;
     }
 
+    // Serve static assets for widgets
+    if (req.method === "GET") {
+      const assetPath = url.pathname.slice(1);
+      const fullPath = path.join(ASSETS_DIR, assetPath);
+      const resolvedPath = path.resolve(fullPath);
+      
+      if (!resolvedPath.startsWith(path.resolve(ASSETS_DIR))) {
+        res.writeHead(403).end("Forbidden");
+        return;
+      }
+
+      if (fs.existsSync(resolvedPath) && fs.statSync(resolvedPath).isFile()) {
+        const ext = path.extname(resolvedPath).toLowerCase();
+        const contentTypes: { [key: string]: string } = {
+          ".html": "text/html",
+          ".js": "application/javascript",
+          ".css": "text/css",
+          ".json": "application/json",
+          ".png": "image/png",
+          ".jpg": "image/jpeg",
+          ".jpeg": "image/jpeg",
+          ".gif": "image/gif",
+          ".svg": "image/svg+xml",
+          ".ico": "image/x-icon",
+        };
+        const contentType = contentTypes[ext] || "application/octet-stream";
+        
+        res.writeHead(200, {
+          "Content-Type": contentType,
+          "Access-Control-Allow-Origin": "*",
+          "Cache-Control": "public, max-age=3600",
+        });
+        fs.createReadStream(resolvedPath).pipe(res);
+        return;
+      }
+    }
+
     res.writeHead(404).end("Not Found");
   }
 );
@@ -666,11 +703,11 @@ httpServer.on("clientError", (err: Error, socket) => {
   socket.end("HTTP/1.1 400 Bad Request\r\n\r\n");
 });
 
-httpServer.listen(port, '0.0.0.0', () => {
-  console.log(`Coursera MCP server listening on http://0.0.0.0:${port}`);
-  console.log(`  SSE stream: GET http://0.0.0.0:${port}${ssePath}`);
+httpServer.listen(port, () => {
+  console.log(`Coursera MCP server listening on http://localhost:${port}`);
+  console.log(`  SSE stream: GET http://localhost:${port}${ssePath}`);
   console.log(
-    `  Message post endpoint: POST http://0.0.0.0:${port}${postPath}?sessionId=...`
+    `  Message post endpoint: POST http://localhost:${port}${postPath}?sessionId=...`
   );
 });
 
