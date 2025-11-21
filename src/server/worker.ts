@@ -393,7 +393,7 @@ async function searchCoursesAPI(
       return null;
     }
 
-    const coursesData = await response.json();
+    const coursesData = await response.json() as any;
     
     if (!coursesData.elements || coursesData.elements.length === 0) {
       console.warn("[worker.ts] --> No courses found in API response");
@@ -514,7 +514,7 @@ async function getAccessToken(env: Env): Promise<string | null> {
       return null;
     }
 
-    const data = await response.json();
+    const data = await response.json() as any;
     accessToken = data.access_token;
     // Set expiry to 5 minutes before actual expiry for safety
     tokenExpiry = Date.now() + ((data.expires_in - 300) * 1000);
@@ -584,7 +584,7 @@ export default {
 
     // MCP RPC endpoint (standardized)
     if (url.pathname === "/mcp/rpc" && request.method === "POST") {
-      const body = await request.json();
+      const body = await request.json() as any;
       const { method, params } = body;
 
       // List tools
@@ -700,7 +700,7 @@ export default {
 
     // MCP message endpoint (legacy support)
     if (url.pathname === "/message" && request.method === "POST") {
-      const body = await request.json();
+      const body = await request.json() as any;
       const { method, params } = body;
 
       // List tools

@@ -517,7 +517,7 @@ function createCourseraServer(): Server {
 
           // Apply difficulty filter
           if (args.difficulty && args.difficulty !== "any") {
-            courses = courses.filter((c) => 
+            courses = courses.filter((c: any) => 
               c.difficultyLevel.toLowerCase().includes(args.difficulty!.toLowerCase())
             );
           }

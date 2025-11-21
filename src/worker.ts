@@ -395,7 +395,7 @@ async function searchCoursesAPI(
       return null;
     }
 
-    const data = await response.json();
+    const data = await response.json() as any;
     return Array.isArray(data.courses) ? data.courses : null;
   } catch (error) {
     console.error("[worker.ts][searchCoursesAPI] --> Error:", error);
@@ -464,7 +464,7 @@ export default {
 
     // MCP RPC endpoint (standardized)
     if (url.pathname === "/mcp/rpc" && request.method === "POST") {
-      const body = await request.json();
+      const body = await request.json() as any;
       const { method, params } = body;
 
       // List tools
@@ -580,7 +580,7 @@ export default {
 
     // MCP message endpoint (legacy support)
     if (url.pathname === "/message" && request.method === "POST") {
-      const body = await request.json();
+      const body = await request.json() as any;
       const { method, params } = body;
 
       // List tools
