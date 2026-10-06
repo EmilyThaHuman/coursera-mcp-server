@@ -108,7 +108,7 @@ const widgets: CourseraWidget[] = [
     templateUri: "ui://widget/play_lecture_video.html?v=0.0.1",
     invoking: "Loading your Coursera course preview",
     invoked: "Loaded your Coursera course preview",
-    html: readWidgetHtml("play-lecture-video"),
+    html: readWidgetHtml("coursera-courses"),
     responseText: "Found matching courses and lectures",
   },
 ];
@@ -629,6 +629,7 @@ const port = Number.isFinite(portEnv) ? portEnv : 8000;
 function setCorsHeaders(res: ServerResponse, origin?: string) {
   const allowedOrigins = [
     'https://zerotwo.ai',
+    'https://app.zerotwo.ai',
     'http://localhost:3000',
     'http://localhost:5173',
   ];
